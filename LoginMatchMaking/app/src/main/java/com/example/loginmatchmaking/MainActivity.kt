@@ -17,9 +17,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.loginmatchmaking.ui.theme.LoginMatchMakingTheme
@@ -43,6 +47,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Tela(name: String, modifier: Modifier = Modifier) {
+
+    val valorEmail = remember { mutableStateOf("")}
+    val valorSenha = remember { mutableStateOf("")}
+
+
     Box(modifier = Modifier.fillMaxSize()) {
 
         Column(
@@ -55,20 +64,27 @@ fun Tela(name: String, modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            Column {
+                Text(text = "Faça seu login")
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
             TextField(
-                value = "email",
-                onValueChange = { },
-                label = {"Email"},
+                value = valorEmail.value,
+                onValueChange = {valorEmail.value= it },
+                label = {Text("Email")},
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextField(
-                value = "password",
-                onValueChange = { },
-                label = {"Password"},
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+                value = valorSenha.value,
+                onValueChange = {valorSenha.value= it},
+                label = {Text("Senha")},
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+                visualTransformation = PasswordVisualTransformation()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
