@@ -1,5 +1,6 @@
 package com.example.matchmakingapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ScrollView
 import androidx.activity.ComponentActivity
@@ -36,6 +37,7 @@ import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -66,6 +68,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Tela(name: String, modifier: Modifier = Modifier) {
+    val contexto = LocalContext.current
 
     val nome = remember {
         mutableStateOf("")
@@ -171,7 +174,11 @@ fun Tela(name: String, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = AbsoluteAlignment.Right
         ) {
-            Button(onClick = { /*TODO*/ },
+            Button(onClick = {
+                val cadastroFoto = Intent(contexto, CadastroFoto::class.java)
+
+                contexto.startActivity(cadastroFoto)
+            },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier.size(width = 150.dp, height = 50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = blue, contentColor = Color.White)
