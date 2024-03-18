@@ -6,6 +6,7 @@ import android.widget.ScrollView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -174,16 +175,33 @@ fun Tela(name: String, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = AbsoluteAlignment.Right
         ) {
-            Button(onClick = {
-                val cadastroFoto = Intent(contexto, CadastroFoto::class.java)
-
-                contexto.startActivity(cadastroFoto)
-            },
-                shape = RoundedCornerShape(20),
-                modifier = Modifier.size(width = 150.dp, height = 50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = blue, contentColor = Color.White)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Text(text = "Próximo", fontFamily = lalezarFamily, fontSize = 20.sp)
+                Button(onClick = {
+                    val login = Intent(contexto, Login::class.java)
+
+                    contexto.startActivity(login)
+                },
+                    shape = RoundedCornerShape(20),
+                    modifier = Modifier.size(width = 150.dp, height = 50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = blue, contentColor = Color.White)
+                ) {
+                    Text(text = "Voltar", fontFamily = lalezarFamily, fontSize = 20.sp)
+                }
+
+                Button(onClick = {
+                    val cadastroFoto = Intent(contexto, CadastroFoto::class.java)
+
+                    contexto.startActivity(cadastroFoto)
+                },
+                    shape = RoundedCornerShape(20),
+                    modifier = Modifier.size(width = 150.dp, height = 50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = blue, contentColor = Color.White)
+                ) {
+                    Text(text = "Próximo", fontFamily = lalezarFamily, fontSize = 20.sp)
+                }
             }
         }
     }

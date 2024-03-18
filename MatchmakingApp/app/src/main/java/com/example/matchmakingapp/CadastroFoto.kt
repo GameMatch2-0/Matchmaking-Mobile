@@ -135,7 +135,7 @@ fun CadastroFoto(extras: Bundle?) {
                     modifier = Modifier.size(width = 150.dp, height = 50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = blue, contentColor = Color.White)
                 ) {
-                    Text(text = "Voltar", fontFamily = lalezarFamily, fontSize = 20.sp)
+                    Text(text = "Anterior", fontFamily = lalezarFamily, fontSize = 20.sp)
                 }
 
                 Button(onClick = { /*TODO*/ },
