@@ -113,10 +113,10 @@ fun Tela(name: String, modifier: Modifier = Modifier) {
             color = blue,
             fontFamily = lalezarFamily
         )
-        CreateSpacingHeight(space = 10)
+        CreateSpacingHeight(space = 5)
 
         Text(text = "Cadastro", fontSize = 25.sp, fontFamily = lalezarFamily)
-        CreateSpacingHeight(space = 10)
+        CreateSpacingHeight(space = 5)
 
         TextBoxAndTitle(title = "Nome:", input = nome)
         CreateSpacingHeight(space = 15)
@@ -217,7 +217,7 @@ fun TextBoxAndTitle(title: String, input: MutableState<String>) {
             onValueChange = { newValue -> input.value = newValue },
             modifier = Modifier
                 .fillMaxWidth()
-                .size(width = 310.dp, height = 50.dp),
+                .size(width = 310.dp, height = 48.dp),
             shape = RoundedCornerShape(20),
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color(231, 231, 232),

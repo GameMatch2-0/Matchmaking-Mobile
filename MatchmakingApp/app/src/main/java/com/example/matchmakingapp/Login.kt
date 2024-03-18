@@ -89,7 +89,12 @@ fun Login(extras: Bundle?) {
             CreateSpacingHeight(space = 50)
 
             Column {
-                Text(text = "Bem vindo(a)!")
+                Text(
+                    text = "Bem vindo(a)!",
+                    fontSize = 25.sp,
+                    color = Color.Black,
+                    fontFamily = lalezarFamily
+                )
             }
 
             Spacer(modifier = Modifier.height(32.dp))
