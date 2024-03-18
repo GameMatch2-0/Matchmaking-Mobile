@@ -1,5 +1,6 @@
 package com.example.matchmakingapp
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -14,8 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -31,7 +35,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.matchmakingapp.ui.theme.MatchmakingAppTheme
+import com.example.matchmakingapp.ui.theme.lalezarFamily
 
 class Login : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -73,11 +79,17 @@ fun Login(extras: Bundle?) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Text(
+                text = "MatchMaking",
+                fontSize = 30.sp,
+                color = blue,
+                fontFamily = lalezarFamily
+            )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            CreateSpacingHeight(space = 50)
 
             Column {
-                Text(text = "Faça seu login")
+                Text(text = "Bem vindo(a)!")
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -87,24 +99,12 @@ fun Login(extras: Bundle?) {
                 return emailRegex.matches(email)
             }
 
-            TextField(
-                value = valorEmail.value,
-                onValueChange = {valorEmail.value= it },
-                label = {Text("Email")},
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                isError = !isValidEmail(valorEmail.value)
-            )
+            TextBoxAndTitle(title = "Email:", input = valorEmail)
+            CreateSpacingHeight(space = 15)
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            TextField(
-                value = valorSenha.value,
-                onValueChange = {valorSenha.value= it},
-                label = {Text("Senha")},
-                // supportingText = {if (valDig == true)},
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
-                visualTransformation = PasswordVisualTransformation(),
-            )
+            TextBoxAndTitle(title = "Senha:", input = valorSenha)
+            CreateSpacingHeight(space = 15)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -114,11 +114,18 @@ fun Login(extras: Bundle?) {
                     Toast.makeText(context ,"Valor inválido", Toast.LENGTH_SHORT).show()
                 }else if (valorSenha.value.length < 6) {
                     Toast.makeText(context ,"Deve conter mais de 6 caracteres", Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                Text("Login")
-            }
+                } else {
+                    val cadastro = Intent(contexto, MainActivity::class.java)
 
+                    contexto.startActivity(cadastro)
+                }
+            },
+                shape = RoundedCornerShape(20),
+                modifier = Modifier.size(width = 150.dp, height = 50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = blue, contentColor = Color.White)
+            ) {
+                Text(text = "Login", fontFamily = lalezarFamily, fontSize = 20.sp)
+            }
         }
     }
 }

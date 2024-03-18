@@ -217,7 +217,7 @@ fun TextBoxAndTitle(title: String, input: MutableState<String>) {
             onValueChange = { newValue -> input.value = newValue },
             modifier = Modifier
                 .fillMaxWidth()
-                .size(width = 310.dp, height = 40.dp),
+                .size(width = 310.dp, height = 50.dp),
             shape = RoundedCornerShape(20),
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color(231, 231, 232),
