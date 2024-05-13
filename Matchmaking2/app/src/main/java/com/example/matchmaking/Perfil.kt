@@ -7,14 +7,18 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,10 +29,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,15 +53,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.example.matchmaking.ui.theme.MatchmakingTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import com.example.matchmaking.R
+import com.example.matchmaking.ui.theme.lalezarFamily
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
@@ -82,12 +94,14 @@ class Perfil : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TinderLikeCards() {
     var usuarios by remember { mutableStateOf(mutableListOf<Usuario>()) }
 
     var showDialog by remember { mutableStateOf(false) }
     var showText by remember { mutableStateOf(false) }
+    var imageUrl by remember { mutableStateOf("https://source.unsplash.com/random") }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -128,6 +142,8 @@ fun TinderLikeCards() {
                             if (offsetX > 100.dp.value || offsetX < 0.dp.value) {
                                 usuarios.removeAt(index)
                             }
+                            imageUrl = "https://source.unsplash.com/random/${System.currentTimeMillis()}"
+
                             offsetX = 0f
                         }
                     )
@@ -155,10 +171,219 @@ fun TinderLikeCards() {
                         }
                     }
 
-                    Text(
-                        text = usuario.nome,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(250.dp)
+                                .background(Color.Yellow),
+                        ) {
+                            val painter = rememberAsyncImagePainter(
+                                ImageRequest.Builder(LocalContext.current)
+                                    .data(data = imageUrl).apply(block = fun ImageRequest.Builder.() {
+                                        crossfade(true)
+                                    }).build()
+                            )
+
+                            Image(
+                                painter = painter,
+                                contentDescription = "Imagem aleatória",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            ) {
+
+                            Text(
+                                text = usuario.username,
+                                fontSize = 20.sp,
+                                fontFamily = lalezarFamily,
+                                color = Color.White
+                            )
+
+                            Spacer(modifier = Modifier.width(35.dp))
+
+                            Text(
+                                text = usuario.dt_nascimento,
+                                fontSize = 20.sp,
+                                fontFamily = lalezarFamily,
+                                color = Color.White
+                            )
+
+                            Spacer(modifier = Modifier.width(35.dp))
+
+                            Image(
+                                painter = painterResource(id = R.mipmap.estrela),
+                                contentDescription = "Icone estrela",
+                                modifier = Modifier
+                                    .height(30.dp)
+                            )
+
+                            Spacer(modifier = Modifier.width(5.dp))
+
+                            Text(
+                                text = usuario.nota.toString(),
+                                fontSize = 20.sp,
+                                fontFamily = lalezarFamily,
+                                color = Color.White
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp, 0.dp),
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Text(
+                                text = usuario.nome,
+                                fontSize = 16.sp,
+                                fontFamily = lalezarFamily,
+                                color = Color.White
+                            )
+
+                            Spacer(modifier = Modifier.width(3.dp))
+
+                            Text(
+                                text = usuario.sobrenome,
+                                fontSize = 16.sp,
+                                fontFamily = lalezarFamily,
+                                color = Color.White
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(15.dp))
+
+                        Text(
+                            text = usuario.biografia,
+                            fontSize = 20.sp,
+                            fontFamily = lalezarFamily,
+                            color = Color.White
+                        )
+
+                        Spacer(modifier = Modifier.height(15.dp))
+
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            Arrangement.Center
+                        ) {
+                            usuario.jogos_favoritos.forEach { jogo ->
+                                OutlinedCard(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color.Transparent
+                                    ),
+                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(2.dp, Color(65, 80, 183))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(40.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = jogo,
+                                            modifier = Modifier
+                                                .padding(5.dp, 0.dp),
+                                            fontSize = 20.sp,
+                                            fontFamily = lalezarFamily,
+                                            color = Color(65, 80, 183),
+                                        )
+                                    }
+                                }
+                            }
+
+                            usuario.generos_favoritos.forEach { genero ->
+                                OutlinedCard(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color.Transparent
+                                    ),
+                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(2.dp, Color(76, 175, 80, 255))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(40.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = genero,
+                                            modifier = Modifier
+                                                .padding(5.dp, 0.dp),
+                                            fontSize = 20.sp,
+                                            fontFamily = lalezarFamily,
+                                            color = Color(76, 175, 80, 255),
+                                        )
+                                    }
+                                }
+                            }
+
+                            usuario.consoles.forEach { console ->
+                                OutlinedCard(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color.Transparent
+                                    ),
+                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(2.dp, Color(255, 152, 0, 255))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(40.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = console,
+                                            modifier = Modifier
+                                                .padding(5.dp, 0.dp),
+                                            fontSize = 20.sp,
+                                            fontFamily = lalezarFamily,
+                                            color = Color(255, 152, 0, 255),
+                                        )
+                                    }
+                                }
+                            }
+
+                            usuario.interesses.forEach { interesse ->
+                                OutlinedCard(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color.Transparent
+                                    ),
+                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(2.dp, Color(244, 67, 54, 255))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(40.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = interesse,
+                                            modifier = Modifier
+                                                .padding(5.dp, 0.dp),
+                                            fontSize = 20.sp,
+                                            fontFamily = lalezarFamily,
+                                            color = Color(244, 67, 54, 255),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -192,7 +417,6 @@ fun TinderLikeCards() {
                 Text(
                     "Texto Exemplo",
                     modifier = Modifier.padding(16.dp),
-
                     )
             }
         }
