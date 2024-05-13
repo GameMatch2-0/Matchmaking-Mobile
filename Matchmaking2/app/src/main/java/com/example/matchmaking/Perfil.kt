@@ -30,10 +30,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -69,6 +72,7 @@ import kotlin.math.absoluteValue
 import com.example.matchmaking.R
 import com.example.matchmaking.ui.theme.lalezarFamily
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
@@ -103,6 +107,8 @@ fun TinderLikeCards() {
     var showText by remember { mutableStateOf(false) }
     var imageUrl by remember { mutableStateOf("https://source.unsplash.com/random") }
 
+    var showPerfil by remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
@@ -110,6 +116,202 @@ fun TinderLikeCards() {
     }
 
     val usuariosSnapshot = snapshotFlow { usuarios }.collectAsState(initial = mutableListOf())
+
+    val usuarioLogado = remember { mutableStateOf<Usuario?>(null) }
+
+    LaunchedEffect(key1 = Unit) {
+        usuarioLogado.value = fetchUsuarioLogado()
+    }
+
+    if (showPerfil) {
+        AlertDialog(
+            onDismissRequest = { showPerfil = false },
+            title = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.mipmap.user),
+                        contentDescription = "Icone estrela",
+                        modifier = Modifier
+                            .height(100.dp)
+                    )
+                }
+            },
+            text = {
+                usuarioLogado.value?.let { usuario ->
+                    Column {
+                        Row {
+                            Text("${usuario.username}")
+
+                            Spacer(modifier = Modifier.width(20.dp))
+
+                            Text("${usuario.dt_nascimento}")
+
+                            Spacer(modifier = Modifier.width(20.dp))
+
+                            Image(
+                                painter = painterResource(id = R.mipmap.estrela),
+                                contentDescription = "Icone estrela",
+                                modifier = Modifier
+                                    .height(30.dp)
+                            )
+                            Text("${usuario.nota}")
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Row {
+                            Text("${usuario.nome}")
+
+                            Spacer(modifier = Modifier.width(5.dp))
+
+                            Text(" ${usuario.sobrenome}")
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Text("Biografia: ${usuario.biografia}")
+
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            Arrangement.Center
+                        ) {
+                            usuario.jogos_favoritos.forEach { jogo ->
+                                OutlinedCard(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color.Transparent
+                                    ),
+                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(2.dp, Color(65, 80, 183))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(40.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = jogo,
+                                            modifier = Modifier
+                                                .padding(5.dp, 0.dp),
+                                            fontSize = 20.sp,
+                                            fontFamily = lalezarFamily,
+                                            color = Color(65, 80, 183),
+                                        )
+                                    }
+                                }
+                            }
+
+                            usuario.generos_favoritos.forEach { genero ->
+                                OutlinedCard(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color.Transparent
+                                    ),
+                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(2.dp, Color(76, 175, 80, 255))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(40.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = genero,
+                                            modifier = Modifier
+                                                .padding(5.dp, 0.dp),
+                                            fontSize = 20.sp,
+                                            fontFamily = lalezarFamily,
+                                            color = Color(76, 175, 80, 255),
+                                        )
+                                    }
+                                }
+                            }
+
+                            usuario.consoles.forEach { console ->
+                                OutlinedCard(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color.Transparent
+                                    ),
+                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(2.dp, Color(255, 152, 0, 255))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(40.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = console,
+                                            modifier = Modifier
+                                                .padding(5.dp, 0.dp),
+                                            fontSize = 20.sp,
+                                            fontFamily = lalezarFamily,
+                                            color = Color(255, 152, 0, 255),
+                                        )
+                                    }
+                                }
+                            }
+
+                            usuario.interesses.forEach { interesse ->
+                                OutlinedCard(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color.Transparent
+                                    ),
+                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(2.dp, Color(244, 67, 54, 255))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(40.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = interesse,
+                                            modifier = Modifier
+                                                .padding(5.dp, 0.dp),
+                                            fontSize = 20.sp,
+                                            fontFamily = lalezarFamily,
+                                            color = Color(244, 67, 54, 255),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Button(
+                        onClick = { showPerfil = false },
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(65, 80, 183)
+                        )
+                    ) {
+                        Text(
+                            text = "VOLTAR",
+                            fontSize = 25.sp,
+                            fontFamily = lalezarFamily,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        )
+    }
 
     LazyRow(modifier = Modifier.fillMaxSize()) {
         items(usuariosSnapshot.value.size) { index ->
@@ -126,6 +328,7 @@ fun TinderLikeCards() {
                     defaultElevation = 6.dp
                 ),
                 modifier = Modifier
+                    .background(Color(17, 24, 63, 255))
                     .width(width = 390.dp)
                     .height(height = 770.dp)
                     .padding(16.dp)
@@ -142,7 +345,8 @@ fun TinderLikeCards() {
                             if (offsetX > 100.dp.value || offsetX < 0.dp.value) {
                                 usuarios.removeAt(index)
                             }
-                            imageUrl = "https://source.unsplash.com/random/${System.currentTimeMillis()}"
+                            imageUrl =
+                                "https://source.unsplash.com/random/${System.currentTimeMillis()}"
 
                             offsetX = 0f
                         }
@@ -383,6 +587,23 @@ fun TinderLikeCards() {
                                 }
                             }
                         }
+                        Button(onClick = {
+                            showPerfil = true
+                        },
+                            modifier = Modifier
+                                .height(50.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                Color(65, 80, 183)
+                            )
+                        ) {
+                            Text(
+                                text = "PERFIL",
+                                fontSize = 25.sp,
+                                fontFamily = lalezarFamily,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }
@@ -430,4 +651,19 @@ suspend fun fetchUsuarios(): List<Usuario> {
         document.toObject(Usuario::class.java)?.let { usuarios.add(it) }
     }
     return usuarios
+}
+
+suspend fun fetchUsuarioLogado(): Usuario? {
+    val usuarioId = Firebase.auth.currentUser?.uid
+    usuarioId?.let {
+        val querySnapshot = Firebase.firestore.collection("users")
+            .whereEqualTo("id_usuario", usuarioId)
+            .get()
+            .await()
+
+        for (document in querySnapshot.documents) {
+            return document.toObject(Usuario::class.java)
+        }
+    }
+    return null
 }
